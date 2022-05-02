@@ -9,8 +9,13 @@ type IBaseTemplateData struct {
 	ModuleName string
 }
 
+type IExtendedTemplateData struct {
+	ModuleName string
+	ComponentFileName string
+}
+
 type IDataTypes interface {
-    IBaseTemplateData
+    IBaseTemplateData | IExtendedTemplateData
 }
 
 type ITemplateInfo struct {
@@ -19,7 +24,7 @@ type ITemplateInfo struct {
 	TempateString string
 }
 
-type ITemplate[T IBaseTemplateData] struct {
+type ITemplate[T IDataTypes] struct {
 	Info ITemplateInfo
 	Data T
 }
@@ -163,6 +168,19 @@ func createReducerTemplate(path string) {
 	data := ITemplate[IBaseTemplateData] {
 		Info: ITemplateInfo{ path, "reducer.tsx", reducerTemplate},
 		Data: IBaseTemplateData{moduleName},
+	}
+
+	createTemplate(data)
+}
+
+const indexTemplate = `
+export { {{ .ModuleName}} } from './{{ .ComponentFileName}}';
+`
+
+func createIndexTemplate(path, componentFileName string) {
+	data := ITemplate[IExtendedTemplateData] {
+		Info: ITemplateInfo{ path, "index.ts", indexTemplate},
+		Data: IExtendedTemplateData{moduleName, componentFileName},
 	}
 
 	createTemplate(data)

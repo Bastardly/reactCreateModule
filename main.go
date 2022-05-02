@@ -37,12 +37,14 @@ func main() {
 	// Vi opretter mapperne, hvori filerne skal være
 	createFileFolders(path)
 
-	componentFileName := strings.ToLower(moduleName) + ".tsx"
+	componentFileName := strings.ToLower(moduleName)
+	componentFileNameWithExtension := componentFileName + ".tsx"
 
 	createTypingsTemplate(path)
-	createComponentTemplate(path, componentFileName)
+	createComponentTemplate(path, componentFileNameWithExtension)
 	createContextTemplate(path)
 	createReducerTemplate(path)
+	createIndexTemplate(path, componentFileName)
 
 	println(string(colorGreen), "\n\n Modulet", moduleName, "blev oprettet her:" + path + "\n\n", string(colorReset))
 
