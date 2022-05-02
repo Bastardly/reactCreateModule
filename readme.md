@@ -5,6 +5,6 @@ Hent filen CreateModule til Mac, og CreateModule.exe til windows.
 
 Kør fra konsollen:
 
-./CreateModule ModulNavn
+./createmodule ModulNavn
 
 CreateModule vil placere det nye modul, relativt til filens placering.
