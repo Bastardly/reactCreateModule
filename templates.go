@@ -14,7 +14,6 @@ type IDataTypes interface {
 }
 
 type ITemplateInfo struct {
-	ModuleName string
 	Path string
 	FileName string
 	TempateString string
@@ -33,7 +32,7 @@ export interface I{{ .Name}}Reducer {}
 
 func createTemplate[T IDataTypes](data ITemplate[T]) {
 	// Indlæser vores templateString som en ny template
-	t, err := template.New(data.Info.ModuleName).Parse(data.Info.TempateString)
+	t, err := template.New(data.Info.FileName).Parse(data.Info.TempateString)
 	if err != nil {
 		panic(err)
 	}
@@ -48,29 +47,10 @@ func createTemplate[T IDataTypes](data ITemplate[T]) {
 }
 
 func createTypingsTemplate(path string) {
-	data := ITemplate {
-		Info {
-
-		},
-		Data: 
+	data := ITemplate[ITypingsData] {
+		Info: ITemplateInfo{ path, "typingsTemplate.ts",typingsTemplate},
+		Data: ITypingsData{*moduleName},
 	}
 
 	createTemplate(data)
-
-
-
-
-	t, err := template.New("typingsTemplate").Parse(typingsTemplate)
-	  if err != nil {
-		  panic(err)
-	  }
-
-	  file, err := os.Create(path + "/typingsTemplate.ts")
-	  if err != nil {
-		panic(err)
-	}
-
-	t.Execute(file, ITypingsTemplate{*moduleName})
-
-
 }
