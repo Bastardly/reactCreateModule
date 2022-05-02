@@ -1,16 +1,16 @@
 package main
 
 import (
-	"html/template"
 	"os"
+	"text/template"
 )
 
-type ITypingsData struct {
-	Name string
+type IBaseTemplateData struct {
+	ModuleName string
 }
 
 type IDataTypes interface {
-    ITypingsData
+    IBaseTemplateData
 }
 
 type ITemplateInfo struct {
@@ -19,16 +19,11 @@ type ITemplateInfo struct {
 	TempateString string
 }
 
-type ITemplate[T ITypingsData] struct {
+type ITemplate[T IBaseTemplateData] struct {
 	Info ITemplateInfo
 	Data T
 }
 
-const typingsTemplate = `
-export interface I{{ .Name}} {}
-
-export interface I{{ .Name}}Reducer {}
-`
 
 func createTemplate[T IDataTypes](data ITemplate[T]) {
 	// Indlæser vores templateString som en ny template
@@ -46,10 +41,128 @@ func createTemplate[T IDataTypes](data ITemplate[T]) {
   t.Execute(file, data.Data)
 }
 
+const typingsTemplate = `
+import { Dispatch } from 'react';
+
+type EmptyActionType<T extends string> = {
+	type: T;
+};
+
+type PayloadType<Payload, Optional extends boolean> = Optional extends true
+? { payload?: Payload }
+: { payload: Payload };
+
+type ActionType<
+	T extends string,
+	Payload,
+	Optional extends boolean = false
+> = EmptyActionType<T> & PayloadType<Payload, Optional>;
+
+export type IAction = 
+	| ActionType<'update', Partial<I{{ .ModuleName}}State>>
+
+
+type IDispatch = Dispatch<IAction>;
+
+export interface I{{ .ModuleName}} {};
+export interface I{{ .ModuleName}}Reducer {};
+export interface I{{ .ModuleName}}State extends Record<string, any> {};
+
+export interface I{{ .ModuleName}}Context {
+	state: I{{ .ModuleName}}State;
+	actions: {};
+	dispatch: IDispatch;
+}
+`
+
+
 func createTypingsTemplate(path string) {
-	data := ITemplate[ITypingsData] {
-		Info: ITemplateInfo{ path, "typingsTemplate.ts",typingsTemplate},
-		Data: ITypingsData{*moduleName},
+	data := ITemplate[IBaseTemplateData] {
+		Info: ITemplateInfo{ path, "typings.ts",typingsTemplate},
+		Data: IBaseTemplateData{*moduleName},
+	}
+
+	createTemplate(data)
+}
+
+
+const componentTemplate = `
+import React, { useReducer } from 'react';
+import { I{{ .ModuleName}} } from './typings';
+import { {{ .ModuleName}}Reducer, initialState } from './reducer';
+import { {{ .ModuleName}}Context, use{{ .ModuleName}}Context } from './context';
+
+
+const TestComponent = () => {
+	const { state, actions, dispatch } = use{{ .ModuleName}}Context();
+
+	return <div>Hello World</div>;
+}
+
+export function {{ .ModuleName}}(props: I{{ .ModuleName}}) {
+	const [state, dispatch] = useReducer({{ .ModuleName}}Reducer , initialState);
+
+	return (
+		<{{ .ModuleName}}Context.Provider value={ { state, actions: {}, dispatch } }>
+			<TestComponent />
+		</{{ .ModuleName}}Context.Provider>
+	);
+}
+`
+
+func createComponentTemplate(path, componentFileName string) {
+	data := ITemplate[IBaseTemplateData] {
+		Info: ITemplateInfo{ path, componentFileName, componentTemplate},
+		Data: IBaseTemplateData{*moduleName},
+	}
+
+	createTemplate(data)
+}
+
+const contextTemplate = `
+import { createContext, useContext } from 'react';
+import { I{{ .ModuleName}}Context } from './typings';
+
+export const {{ .ModuleName}}Context = createContext<I{{ .ModuleName}}Context>(null);
+
+export function use{{ .ModuleName}}Context(): I{{ .ModuleName}}Context {
+	return useContext({{ .ModuleName}}Context);
+}
+`
+
+func createContextTemplate(path string) {
+	data := ITemplate[IBaseTemplateData] {
+		Info: ITemplateInfo{ path, "context.tsx", contextTemplate},
+		Data: IBaseTemplateData{*moduleName},
+	}
+
+	createTemplate(data)
+}
+
+const reducerTemplate = `
+import { I{{ .ModuleName}}State, IAction } from './typings';
+
+export const initialState: I{{ .ModuleName}}State = {};
+
+export function {{ .ModuleName}}Reducer(state: I{{ .ModuleName}}State, action: IAction) {
+	switch (action.type) {
+	case 'update': {
+		return {
+			...state,
+			...action.payload,
+		}
+	}
+		default: {
+			return state
+		}
+	}
+}
+`
+
+func createReducerTemplate(path string) {
+	data := ITemplate[IBaseTemplateData] {
+		Info: ITemplateInfo{ path, "reducer.tsx", reducerTemplate},
+		Data: IBaseTemplateData{*moduleName},
 	}
 
 	createTemplate(data)
