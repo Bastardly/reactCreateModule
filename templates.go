@@ -70,7 +70,6 @@ export type IAction =
 type IDispatch = Dispatch<IAction>;
 
 export interface I{{ .ModuleName}} {};
-export interface I{{ .ModuleName}}Reducer {};
 export interface I{{ .ModuleName}}State extends Record<string, any> {};
 
 export interface I{{ .ModuleName}}Context {

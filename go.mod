@@ -1,3 +1,3 @@
-module modulemaker
+module createmodule
 
 go 1.18

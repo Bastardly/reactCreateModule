@@ -1,10 +1,10 @@
-# React ModuleMaker
+# React CreateModule
 Formålet er at kunne lave ensartede React Moduler. 
 
-Hent filen modulemaker til Mac, og modulemaker.exe til windows.
+Hent filen CreateModule til Mac, og CreateModule.exe til windows.
 
 Kør fra konsollen:
 
-./modulemaker ModulNavn
+./CreateModule ModulNavn
 
-modulemaker vil placere det nye modul, relativt til filens placering.
+CreateModule vil placere det nye modul, relativt til filens placering.
