@@ -79,7 +79,7 @@ export interface I{{ .ModuleName}}Context {
 func createTypingsTemplate(path string) {
 	data := ITemplate[IBaseTemplateData] {
 		Info: ITemplateInfo{ path, "typings.ts",typingsTemplate},
-		Data: IBaseTemplateData{*moduleName},
+		Data: IBaseTemplateData{moduleName},
 	}
 
 	createTemplate(data)
@@ -113,7 +113,7 @@ export function {{ .ModuleName}}(props: I{{ .ModuleName}}) {
 func createComponentTemplate(path, componentFileName string) {
 	data := ITemplate[IBaseTemplateData] {
 		Info: ITemplateInfo{ path, componentFileName, componentTemplate},
-		Data: IBaseTemplateData{*moduleName},
+		Data: IBaseTemplateData{moduleName},
 	}
 
 	createTemplate(data)
@@ -133,7 +133,7 @@ export function use{{ .ModuleName}}Context(): I{{ .ModuleName}}Context {
 func createContextTemplate(path string) {
 	data := ITemplate[IBaseTemplateData] {
 		Info: ITemplateInfo{ path, "context.tsx", contextTemplate},
-		Data: IBaseTemplateData{*moduleName},
+		Data: IBaseTemplateData{moduleName},
 	}
 
 	createTemplate(data)
@@ -162,7 +162,7 @@ export function {{ .ModuleName}}Reducer(state: I{{ .ModuleName}}State, action: I
 func createReducerTemplate(path string) {
 	data := ITemplate[IBaseTemplateData] {
 		Info: ITemplateInfo{ path, "reducer.tsx", reducerTemplate},
-		Data: IBaseTemplateData{*moduleName},
+		Data: IBaseTemplateData{moduleName},
 	}
 
 	createTemplate(data)

@@ -20,3 +20,7 @@ func createFileFolders(path string) {
 		log.Println(err)
 	}
 }
+
+func getErrorText(text string) string {
+	return colorRed + " " + text + " " + colorReset
+}
