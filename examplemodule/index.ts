@@ -1,0 +1,2 @@
+
+export { Examplemodule } from './examplemodule';

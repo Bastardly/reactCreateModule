@@ -31,13 +31,13 @@ type ITemplate[T IDataTypes] struct {
 
 
 func createTemplate[T IDataTypes](data ITemplate[T]) {
-	// Indlæser vores templateString som en ny template
+	// Reads our templateString as a new template
 	t, err := template.New(data.Info.FileName).Parse(data.Info.TempateString)
 	if err != nil {
 		panic(err)
 	}
 
-	// Opretter vores template som en ny fil 
+	// Create our template as a new file
 	file, err := os.Create(data.Info.Path + "/" + data.Info.FileName)
 	if err != nil {
 	  panic(err)
@@ -67,7 +67,7 @@ export type IAction =
 	| ActionType<'update', Partial<I{{ .ModuleName}}State>>
 
 
-type IDispatch = Dispatch<IAction>;
+export type IDispatch = Dispatch<IAction>;
 
 export interface I{{ .ModuleName}} {};
 export interface I{{ .ModuleName}}State extends Record<string, any> {};
@@ -91,10 +91,11 @@ func createTypingsTemplate(path string) {
 
 
 const componentTemplate = `
-import React, { useReducer } from 'react';
-import { I{{ .ModuleName}} } from './typings';
+import React, { useReducer, useMemo } from 'react';
+import { I{{ .ModuleName}}, I{{ .ModuleName}}Context } from './typings';
 import { {{ .ModuleName}}Reducer, initialState } from './reducer';
 import { {{ .ModuleName}}Context, use{{ .ModuleName}}Context } from './context';
+import { mapActions } from './actions';
 
 
 const TestComponent = () => {
@@ -106,8 +107,16 @@ const TestComponent = () => {
 export function {{ .ModuleName}}(props: I{{ .ModuleName}}) {
 	const [state, dispatch] = useReducer({{ .ModuleName}}Reducer , initialState);
 
+	const value = useMemo((): I{{ .ModuleName}}Context => {
+		return {
+			state,
+			actions: mapActions(dispatch),
+			dispatch,
+		};
+	}, [state]);
+
 	return (
-		<{{ .ModuleName}}Context.Provider value={ { state, actions: {}, dispatch } }>
+		<{{ .ModuleName}}Context.Provider value={ value }>
 			<TestComponent />
 		</{{ .ModuleName}}Context.Provider>
 	);
@@ -180,6 +189,24 @@ func createIndexTemplate(path, componentFileName string) {
 	data := ITemplate[IExtendedTemplateData] {
 		Info: ITemplateInfo{ path, "index.ts", indexTemplate},
 		Data: IExtendedTemplateData{moduleName, componentFileName},
+	}
+
+	createTemplate(data)
+}
+
+const actionsTemplate = `
+import { IDispatch, I{{ .ModuleName}}State } from './typings';
+
+export const mapActions = (dispatch: IDispatch) => ({
+	update: (payload: Partial<I{{ .ModuleName}}State>) =>
+		dispatch({ type: 'update', payload }),
+});
+`
+
+func createActionsTemplate(path string) {
+	data := ITemplate[IBaseTemplateData] {
+		Info: ITemplateInfo{ path, "actions.ts", actionsTemplate},
+		Data: IBaseTemplateData{moduleName},
 	}
 
 	createTemplate(data)

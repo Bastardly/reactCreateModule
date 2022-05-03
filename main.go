@@ -15,37 +15,34 @@ const colorReset = "\033[0m"
 
 func main() {
 	if len(os.Args) < 2 {
-		panic(getErrorText("Modulet skal have et navn: Kør fx. modulemaker MitModul"))
+		panic(getErrorText("The module needs a name as an argument: For instance ./modulemaker MyModule"))
 	}
 
 	moduleName = strings.Title(os.Args[1])
-
-
-	// Vi finder foldername, og ligger den i vores parentfolder
 	folderName := strings.ToLower(moduleName)
 	path := parentFolder + folderName
 
-	// Vi sikrer os at vi ikke kommer til at overskrive noget ved en fejl
+	// We make use that we don't delete any files by mistake.
 	hasFiles, _ := filepathExists(path)
 
-	// Hvis modulenavnet allerede findes kaster vi en fejl
 	if hasFiles {
 		println(path)
-		panic(getErrorText("Den valgte sti findes allerede. Slet den før du opretter nyt modul"))
+		panic(getErrorText("The path already exist. Please delete the path folder, or call your module something else."))
 	}
 
-	// Vi opretter mapperne, hvori filerne skal være
 	createFileFolders(path)
 
 	componentFileName := strings.ToLower(moduleName)
 	componentFileNameWithExtension := componentFileName + ".tsx"
 
+	// Create files from templates
 	createTypingsTemplate(path)
 	createComponentTemplate(path, componentFileNameWithExtension)
 	createContextTemplate(path)
 	createReducerTemplate(path)
 	createIndexTemplate(path, componentFileName)
+	createActionsTemplate(path)
 
-	println(string(colorGreen), "\n\n Modulet", moduleName, "blev oprettet her:" + path + "\n\n", string(colorReset))
+	println(string(colorGreen), "\n\n The module", moduleName, "was created here:" + path + "\n\n", string(colorReset))
 
 }
