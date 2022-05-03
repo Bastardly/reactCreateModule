@@ -1,10 +1,18 @@
-# React CreateModule
-Formålet er at kunne lave ensartede React Moduler. 
+# React CreateModule (POC)
+This is created to speed up development by making a uniform starting modules. 
 
-Hent filen CreateModule til Mac, og CreateModule.exe til windows.
+To use this, you can either compile the repo yourself, or you can download the executables.
 
-Kør fra konsollen:
+'createModule' file for Mac, and 'createModule.exe' file for windows.
 
-./createmodule ModulNavn
+You then run it from the console.
 
-CreateModule vil placere det nye modul, relativt til filens placering.
+./createmodule YourModuleName
+
+CreateModule will place the new module relative to the placement of the executable at ./modules/yourmodulename
+
+## Disclaimer
+This is a proof of concept. I might decide to make this more customizable. 
+But for now, it was just an excuse to you Go.
+
+Go is awesome...
