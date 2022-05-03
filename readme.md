@@ -13,6 +13,6 @@ CreateModule will place the new module relative to the placement of the executab
 
 ## Disclaimer
 This is a proof of concept. I might decide to make this more customizable. 
-But for now, it was just an excuse to you Go.
+But for now, it was just an excuse to use Go.
 
 Go is awesome...
