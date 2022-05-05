@@ -48,6 +48,7 @@ func createTemplate[T IDataTypes](data ITemplate[T]) {
 
 const typingsTemplate = `
 import { Dispatch } from 'react';
+import { mapActions } from './actions';
 
 type EmptyActionType<T extends string> = {
 	type: T;
@@ -66,6 +67,10 @@ type ActionType<
 export type IAction = 
 	| ActionType<'update', Partial<I{{ .ModuleName}}State>>
 
+type IActions = ReturnType<typeof mapActions> & {
+	// Unmapped or actions from props here
+};
+
 
 export type IDispatch = Dispatch<IAction>;
 
@@ -74,7 +79,7 @@ export interface I{{ .ModuleName}}State extends Record<string, any> {};
 
 export interface I{{ .ModuleName}}Context {
 	state: I{{ .ModuleName}}State;
-	actions: {};
+	actions: IActions;
 	dispatch: IDispatch;
 }
 `

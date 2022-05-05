@@ -1,5 +1,6 @@
 
 import { Dispatch } from 'react';
+import { mapActions } from './actions';
 
 type EmptyActionType<T extends string> = {
 	type: T;
@@ -18,6 +19,10 @@ type ActionType<
 export type IAction = 
 	| ActionType<'update', Partial<IExamplemoduleState>>
 
+type IActions = ReturnType<typeof mapActions> & {
+	// Unmapped or actions from props here
+};
+
 
 export type IDispatch = Dispatch<IAction>;
 
@@ -26,6 +31,6 @@ export interface IExamplemoduleState extends Record<string, any> {};
 
 export interface IExamplemoduleContext {
 	state: IExamplemoduleState;
-	actions: {};
+	actions: IActions;
 	dispatch: IDispatch;
 }
